@@ -45,7 +45,7 @@ test('simulated backend failure is visible and retry succeeds', async ({page}) =
   await expect(card).toBeVisible();
   await card.getByRole('button',{name:'Item actions'}).click();
   await card.getByRole('menuitem',{name:'Dismiss'}).click();
-  await expect(page.getByRole('alert')).toContainText('Simulated backend failure');
+  await expect(page.locator('.alert.error')).toContainText('Simulated backend failure');
   await expect(card).toBeVisible();
   await card.getByRole('button',{name:'Item actions'}).click();
   await card.getByRole('menuitem',{name:'Dismiss'}).click();
@@ -58,7 +58,7 @@ test('permission denial cannot remove an item', async ({page}) => {
   await expect(card).toBeVisible();
   await card.getByRole('button',{name:'Item actions'}).click();
   await card.getByRole('menuitem',{name:'Dismiss'}).click();
-  await expect(page.getByRole('alert')).toContainText('Permission denied');
+  await expect(page.locator('.alert.error')).toContainText('Permission denied');
   await expect(card).toBeVisible();
 });
 
