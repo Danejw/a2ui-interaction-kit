@@ -10,7 +10,7 @@ test.beforeEach(async ({page}) => {
 
 test.afterEach(async ({page}, info) => {
   if (info.status !== info.expectedStatus) {
-    console.log('[diagnostic ERROR]', await page.locator('.alert').all_text_contents());
+    console.log('[diagnostic ERROR]', await page.locator('.alert').allTextContents());
     console.log('[diagnostic DOM]', (await page.locator('body').innerText()).slice(0,3500));
     console.log('[diagnostic HTML]', (await page.locator('[data-testid="rendered-surfaces"]').innerHTML()).slice(0,2500));
   }
