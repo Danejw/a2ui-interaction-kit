@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [main]
+    branches: [main, 'feat/**']
   pull_request:
 jobs:
   verify:
@@ -13,3 +13,6 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npm run check
+      - run: npm run check:lab
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
