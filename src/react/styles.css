@@ -101,3 +101,11 @@
 .a2ui-data-table button:focus-visible{outline:2px solid #5786e1;outline-offset:2px}
 .a2ui-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 @media(max-width:580px){.a2ui-data-table__header{flex-direction:column;align-items:stretch}.a2ui-data-table__search{width:100%}.a2ui-data-table__footer{padding:9px 12px}}
+
+/* Mobile-friendly touch targets for all semantic card interactions. */
+@media(max-width:580px){
+  .a2ui-interaction-item__icon-button{width:44px;height:44px;min-width:44px}
+  .a2ui-interaction-item__primary{min-height:44px;padding-inline:14px}
+  .a2ui-interaction-item__text-button{min-height:44px}
+  .a2ui-interaction-item__menu button{min-height:44px}
+}
