@@ -37,6 +37,7 @@ export function InteractiveItem({
   const [swipe, setSwipe] = React.useState(0);
   const origin = React.useRef<{x: number; y: number} | null>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
+  const menuTriggerRef = React.useRef<HTMLButtonElement>(null);
   const moreId = React.useId();
   const detailsPresent = details != null;
   const enabled = (capability: ItemCapability) => capabilities.includes(capability);
@@ -48,6 +49,7 @@ export function InteractiveItem({
 
   React.useEffect(() => {
     if (!menuOpen) return;
+    menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
     const dismiss = (event: PointerEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) setMenuOpen(false);
     };
@@ -128,11 +130,11 @@ export function InteractiveItem({
             aria-pressed={prioritized} disabled={busy !== null}
             onClick={() => void invoke('Prioritize', onPrioritize)}>{prioritized ? '★' : '☆'}</button>}
           {hasMenu && <div ref={menuRef} className="a2ui-interaction-item__menu-wrap">
-            <button type="button" className="a2ui-interaction-item__icon-button"
+            <button ref={menuTriggerRef} type="button" className="a2ui-interaction-item__icon-button"
               aria-label="Item actions" aria-haspopup="menu" aria-expanded={menuOpen}
               onClick={() => setMenuOpen(open => !open)}>···</button>
             {menuOpen && <div className="a2ui-interaction-item__menu" role="menu"
-              onKeyDown={event => {if (event.key === 'Escape') setMenuOpen(false);}}>
+              onKeyDown={event => {if (event.key === 'Escape') {setMenuOpen(false); menuTriggerRef.current?.focus();}}}>
               {canPrioritize && <button type="button" role="menuitem" disabled={busy !== null}
                 onClick={() => void invoke('Prioritize', onPrioritize)}>{prioritized ? 'Remove priority' : 'Prioritize'}</button>}
               {canDismiss && <button type="button" role="menuitem" className="is-danger" disabled={busy !== null}
