@@ -87,7 +87,9 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
       addTrace('host', {type: ok ? 'ACTION_ACK' : 'ACTION_REJECTED', action});
       if (ok && request?.name === 'dismiss_item') return;
       if (!ok) {
-        showNotice('error', agent.snapshot.lastError ?? 'Host rejected the action');
+        // Host failure is already shown in the card and simulator error banner.
+        // Avoid announcing the same failure a third time.
+        return;
       } else {
         const labels: Record<string, string> = {
           prioritize_item: 'Priority saved', select_item: 'Selection saved',
@@ -274,7 +276,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
             </label>
           </div>
         </details>
-        {agentState.lastError && <div role="alert" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
+        {agentState.lastError && <div role="status" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
             <button type="button" aria-label="Dismiss error" onClick={() => agent.clearError()}>×</button></div>}
           {message && <div role="status" className="alert">{message}
             <button type="button" aria-label="Dismiss message" onClick={() => setMessage(null)}>×</button></div>}
