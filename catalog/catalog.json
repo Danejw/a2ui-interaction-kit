@@ -5,7 +5,7 @@
   "protocolVersion": "1.0",
   "title": "A2UI Interaction Kit",
   "description": "Adds semantic, reusable interactions to agent-generated interfaces.",
-  "instructions": "Use InteractiveItem for tasks, approvals, notices, incidents and reports. Pick a contextual variant, status, metaLabel and primary actionLabel. Declare capabilities only when the host supports them and bind actions to registered handlers. Keep secondary actions in accessible menus and always provide semantic buttons alongside gestures. The host owns authorization and mutation acknowledgement. Never assume dismiss deletes underlying data.",
+  "instructions": "Use InteractiveItem for tasks, approvals, notices, incidents and reports. Pick a contextual variant, status, metaLabel and primary actionLabel. Declare capabilities only when the host supports them and bind actions to registered handlers. Keep secondary actions in accessible menus and always provide semantic buttons alongside gestures. The host owns authorization and mutation acknowledgement. Never assume dismiss deletes underlying data. InteractiveDataTable supports read-only data exploration through local sorting, searching, selection and row expansion; it never implies a backend mutation.",
   "components": {
     "InteractiveItem": {
       "type": "object",
@@ -87,6 +87,76 @@
         "capabilities"
       ],
       "unevaluatedProperties": false
+    },
+    "InteractiveDataTable": {
+      "type": "object",
+      "description": "Data table with local search, sorting, row selection and expandable row details. Local interactions do not mutate backend state.",
+      "properties": {
+        "component": {
+          "const": "InteractiveDataTable"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "description": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "label"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "status": {
+                "type": "string"
+              },
+              "details": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "values"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "component",
+        "title",
+        "columns",
+        "rows"
+      ],
+      "unevaluatedProperties": false
     }
   },
   "$defs": {
@@ -94,6 +164,9 @@
       "oneOf": [
         {
           "$ref": "#/components/InteractiveItem"
+        },
+        {
+          "$ref": "#/components/InteractiveDataTable"
         }
       ],
       "discriminator": {

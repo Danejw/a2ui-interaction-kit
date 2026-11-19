@@ -181,8 +181,19 @@ export class SimulatedAgent {
   private components(surface: string, limit = Number.POSITIVE_INFINITY): Record<string, unknown>[] {
     const visible = this.state.items.filter(x => x.surface === surface && !x.dismissed).slice(0, limit);
     return [
-      {id: 'root', component: 'Column', children: ['heading', ...visible.map(x => componentId('item', x.id))]},
+      {id: 'root', component: 'Column', children: ['heading', ...(this.scenario === 'reports' ? ['reportTable'] : []), ...visible.map(x => componentId('item', x.id))]},
       {id: 'heading', component: 'Text', text: surface === 'main' ? SCENARIOS.find(x => x.id === this.scenario)?.name ?? 'Interaction Lab' : 'Agent ' + surface},
+      ...(this.scenario === 'reports' ? [{
+        id: 'reportTable', component: 'InteractiveDataTable', catalogId: INTERACTION_CATALOG_ID,
+        title: 'Agent activity overview', description: 'Sort, filter or inspect the verified activity below.',
+        columns: [{key:'agent',label:'Agent'},{key:'task',label:'Activity'},{key:'duration',label:'Duration'}],
+        rows: [
+          {id:'agent-alpha',values:['Agent Alpha','Document extraction','4m 12s'],status:'Completed',details:'Extraction verified against source document.'},
+          {id:'agent-beta',values:['Agent Beta','Contractor review','2m 08s'],status:'Review',details:'Three shortlisted candidates awaiting approval.'},
+          {id:'agent-gamma',values:['Agent Gamma','Opportunity scan','6m 42s'],status:'Completed',details:'Seven opportunities indexed.'},
+          {id:'agent-delta',values:['Agent Delta','Deployment check','1m 18s'],status:'Queued',details:'Waiting for validation.'},
+        ],
+      }] : []),
       ...visible.flatMap(x => [this.component(x), {id: componentId('detail', x.id), component: 'Text', text: x.details}]),
     ];
   }

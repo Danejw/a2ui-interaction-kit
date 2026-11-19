@@ -4,6 +4,7 @@ import {z} from 'zod';
 import {createComponentImplementation} from '@a2ui/react';
 import {ActionSchema, ChildListSchema, DynamicStringSchema, Catalog} from '@a2ui/web_core/v1_0';
 import {InteractiveItem, type ItemCapability, type ItemVariant} from '../react/InteractiveItem.js';
+import {InteractiveDataTable} from '../react/InteractiveDataTable.js';
 
 export const INTERACTION_CATALOG_ID = 'https://github.com/Danejw/a2ui-interaction-kit/blob/main/catalog/catalog.json';
 const capabilitySchema = z.enum(['expandable', 'dismissible', 'prioritizable', 'selectable', 'actionable']);
@@ -52,4 +53,21 @@ export const InteractiveItemComponent = createComponentImplementation({
   />
 ));
 
-export const interactionCatalog = new Catalog(INTERACTION_CATALOG_ID, '1.0', [InteractiveItemComponent]);
+export const InteractiveDataTableComponent = createComponentImplementation({
+  name: 'InteractiveDataTable',
+  schema: z.object({
+    title: DynamicStringSchema,
+    description: DynamicStringSchema.optional(),
+    columns: z.array(z.object({key: z.string(), label: z.string()})).min(1),
+    rows: z.array(z.object({
+      id: z.string(), values: z.array(z.string()), status: z.string().optional(), details: z.string().optional(),
+    })),
+  }),
+}, ({props}) => <InteractiveDataTable
+  title={String(props.title ?? '')}
+  description={props.description == null ? undefined : String(props.description)}
+  columns={props.columns}
+  rows={props.rows}
+/>);
+
+export const interactionCatalog = new Catalog(INTERACTION_CATALOG_ID, '1.0', [InteractiveItemComponent, InteractiveDataTableComponent]);
