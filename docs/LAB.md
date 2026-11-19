@@ -21,6 +21,8 @@ npm run test:e2e
 
 ## Architecture
 
+For a visual overview of how an agent-generated A2UI component becomes interactive, see **[Architecture and Interaction Flow](ARCHITECTURE.md)**. The guide contains Mermaid diagrams for the system, available interactions, host authorization, feedback states, and source files.
+
 The in-memory `SimulatedAgent` emits AG-UI `RUN_STARTED`, `ACTIVITY_SNAPSHOT` with `activityType: a2ui-surface` and `content.a2ui_operations`, `STATE_SNAPSHOT`, and `RUN_FINISHED` or `RUN_ERROR`. The actual A2UI `MessageProcessor` processes the operations, and `A2uiSurface` renders with the registered Basic and Interaction catalogs. Outbound A2UI action payloads return to the simulated agent, which validates the item, capability, surface and permissions before changing host state and emitting an updated surface.
 
 The lab has nine scenarios: Mission Control, Approval Queue, Error & Recovery, Permission Denied, Streaming Updates, Multiple Surfaces, and Stress Test. Controls can simulate latency, host errors, denied permissions, and paused event delivery. The right-hand inspector exposes live protocol envelopes. Exported recordings can be imported and replayed read-only through the same A2UI processor.

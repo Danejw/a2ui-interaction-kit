@@ -2,6 +2,8 @@
 
 Reusable semantic interactions for agent-generated interfaces. A small TypeScript interaction engine, an accessible React card, and an A2UI **v1.0** catalog extension.
 
+**[Visual architecture guide](docs/ARCHITECTURE.md):** 9 Mermaid diagrams covering the agent-to-UI pipeline, interaction capabilities, action feedback, extensibility, and file layout.
+
 **Status:** 0.1.0 starter. API and catalog are experimental and have not been published to npm. The engine is tested with Node's built-in test runner. React/A2UI integration requires dependency installation and an end-to-end test with your application.
 
 ## Interaction Kit v0.3: host-confirmed feedback and natural motion
