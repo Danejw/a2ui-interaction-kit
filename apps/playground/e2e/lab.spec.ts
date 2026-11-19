@@ -1,9 +1,18 @@
 import {test, expect} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
+  page.on('pageerror', error => console.log('[pageerror]', error.message));
+  page.on('console', message => {if (message.type() === 'error') console.log('[console.error]', message.text());});
   await page.goto('/');
   await expect(page.getByRole('heading', {name: 'Mission Control'})).toBeVisible();
   await expect(page.locator('[data-item-id="match-01"]')).toBeVisible();
+});
+
+test.afterEach(async ({page}, info) => {
+  if (info.status !== info.expectedStatus) {
+    console.log('[diagnostic DOM]', (await page.locator('body').innerText()).slice(0,3500));
+    console.log('[diagnostic HTML]', (await page.locator('[data-testid="rendered-surfaces"]').innerHTML()).slice(0,2500));
+  }
 });
 
 test('A2UI item expands, prioritizes, dismisses and undoes', async ({page}) => {
