@@ -197,3 +197,16 @@ test('A2UI rendered surface heading has readable text contrast', async ({page}) 
   expect(styles.foreground).not.toBe('rgb(238, 238, 238)');
   expect(styles.foreground).toBe('rgb(53, 71, 97)');
 });
+
+test('mobile card controls meet a 44px touch-target goal with gesture guidance', async ({page},testInfo) => {
+  test.skip(!testInfo.project.name.includes('mobile'),'Phone-specific touch check');
+  const card=page.locator('[data-item-id="match-01"]');
+  const target=card.getByRole('button',{name:'Item actions'});
+  const bounds=await target.boundingBox();
+  expect(bounds?.width ?? 0).toBeGreaterThanOrEqual(44);
+  expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(44);
+  const primary=card.getByRole('button',{name:/Review/});
+  const primaryBounds=await primary.boundingBox();
+  expect(primaryBounds?.height ?? 0).toBeGreaterThanOrEqual(44);
+  await expect(page.getByText('Swipe a card left to dismiss')).toBeVisible();
+});

@@ -141,3 +141,9 @@
 .surface .a2ui-interaction-item__swipe-hint {
   border-radius: 0 15px 15px 0;
 }
+
+/* Gesture discovery is useful on touch screens, without adding button clutter. */
+.gesture-guide{display:none}
+@media(max-width:790px){
+  .canvas-footer .gesture-guide{display:block;width:100%;font-size:11px;font-weight:650;color:#b1caf1;padding-bottom:5px}
+}

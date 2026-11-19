@@ -269,7 +269,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
             <span><span aria-hidden="true">✓</span> Item dismissed</span>
             <button type="button" onClick={() => void agent.undoLast()}>Undo dismiss ↶</button>
           </div>}
-          <div className="canvas-footer"><span>◇ Actual A2UI renderer + Interaction Kit</span>
+          <div className="canvas-footer"><span className="gesture-guide">Swipe a card left to dismiss · Tap ··· for more actions</span><span>◇ Actual A2UI renderer + Interaction Kit</span>
             <span>{playback ? 'Replay view · read-only' : '✓ Host-verified state updates'}</span></div>
         </section>
       </main>
