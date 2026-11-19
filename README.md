@@ -4,6 +4,14 @@ Reusable semantic interactions for agent-generated interfaces. A small TypeScrip
 
 **Status:** 0.1.0 starter. API and catalog are experimental and have not been published to npm. The engine is tested with Node's built-in test runner. React/A2UI integration requires dependency installation and an end-to-end test with your application.
 
+## Interaction Lab v2: composable interaction patterns
+
+The lab now offers **nine deterministic scenarios** spanning task, approval, notification, incident, and report cards, plus a separate **InteractiveDataTable** component with local search, column sorting, row selection and detail expansion. InteractiveItem has a contextual primary action, accessible overflow menu, selection, priority toggle, swipe feedback and dismiss/undo support.
+
+On narrow screens, **Live preview** and **Event trace** are switchable tabs so inspector access no longer requires scrolling past the generated UI. The inspector includes protocol filtering and search, explicit host acknowledgements/rejections, and before/after state changes for snapshot events.
+
+The React components remain reusable independently from the lab. Agent-defined A2UI surfaces are still schema-validated, and all external mutations require host-owned handlers and authorization. The data table's local interactions do not claim backend persistence.
+
 ## Interaction Lab
 
 A browser-based deterministic AG-UI + A2UI integration playground is available in `apps/playground/`. It uses real A2UI renderer components and the reusable Interaction Kit, with seven simulator scenarios, event/action inspection, recording and replay, desktop/mobile browser tests, and no provider keys.
