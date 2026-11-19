@@ -169,7 +169,7 @@ export class SimulatedAgent {
       'catalogId': INTERACTION_CATALOG_ID,
       itemId: id, title, description: completed ? 'Action completed in simulator' : description,
       actionLabel: completed ? 'Completed' : actionLabel,
-      variant, status: completed ? 'Completed' : status, metadata,
+      variant, status: completed ? 'Completed' : status, metaLabel: metadata,
       capabilities, prioritized, selected,
       children: [componentId('detail', id)],
       onDismiss: makeAction('dismiss_item'),

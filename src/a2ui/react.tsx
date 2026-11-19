@@ -19,7 +19,7 @@ export const InteractiveItemComponent = createComponentImplementation({
     capabilities: z.array(capabilitySchema),
     variant: z.enum(['task','approval','notice','incident','report']).optional(),
     status: DynamicStringSchema.optional(),
-    metadata: DynamicStringSchema.optional(),
+    metaLabel: DynamicStringSchema.optional(),
     prioritized: z.boolean().optional(),
     selected: z.boolean().optional(),
     children: ChildListSchema.optional(),
@@ -38,7 +38,7 @@ export const InteractiveItemComponent = createComponentImplementation({
     capabilities={props.capabilities as ItemCapability[]}
     variant={(props.variant ?? 'task') as ItemVariant}
     status={props.status == null ? undefined : String(props.status)}
-    metadata={props.metadata == null ? undefined : String(props.metadata)}
+    metadata={props.metaLabel == null ? undefined : String(props.metaLabel)}
     prioritized={props.prioritized ?? false}
     selected={props.selected ?? false}
     details={props.children?.map(ref => typeof ref === 'string'
