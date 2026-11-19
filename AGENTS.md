@@ -16,3 +16,7 @@ Build a reusable and secure A2UI interaction extension, independent of any one a
 ## UI quality gate (fixed rubric)
 
 Use the 20/25/25/20/10 visual/usability/interactions/mobile/reliability scoring baseline; inspect desktop and mobile live screenshots before claiming a score. New variants must include an accessible keyboard path to secondary actions. Any gesture must have a visible control alternative. Keep the card/data explorer independent of project-specific state. Validate Playwright real-browser round trips rather than trusting typechecks alone.
+
+## Motion and feedback contract
+
+Never show success solely because a gesture or A2UI callback fired; surface confirmation must come from the host-owned state. Keep distinct pending, success and error behavior, along with visible retry, keyboard alternatives, reduced-motion support and no fake persistence. Use stable item identity and avoid duplicate view-transition names on one page. Check actual mobile scroll + swipe coexistence, focus, and CI before merge.

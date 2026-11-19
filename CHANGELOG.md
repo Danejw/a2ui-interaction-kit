@@ -1,3 +1,13 @@
+## 0.3.0
+
+- Added host-authoritative pending, success and error A2UI feedback properties, with accessible status and errors.
+- Added reusable motion helpers with native View Transitions and reduced-motion fallback.
+- Added tactile swipe tracking, cancellation, transition, contextual press feedback, item entrance, details and priority animations.
+- Simulator now publishes pending and acknowledgement/rejection updates through actual A2UI operations and reorders prioritized items after host confirmation.
+- Added accessible lab notifications, reduced duplicate error announcements and made Undo signal its in-flight state.
+- Expanded E2E coverage for gesture cancellation, pending/error/retry, priority ordering and reduced-motion behavior.
+- Maintained deterministic simulation, provider-neutral protocol architecture and permission checks.
+
 # Changelog
 
 ## 0.2.0
