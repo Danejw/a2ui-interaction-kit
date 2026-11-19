@@ -12,3 +12,7 @@ Build a reusable and secure A2UI interaction extension, independent of any one a
 - Gestures need visible and keyboard-accessible equivalents.
 - Keep API surface small. Add tests when adding capabilities and do not introduce persistence or network code into the package.
 - Run `npm run check` before submitting changes. Report integration tests that could not be executed.
+
+## UI quality gate (fixed rubric)
+
+Use the 20/25/25/20/10 visual/usability/interactions/mobile/reliability scoring baseline; inspect desktop and mobile live screenshots before claiming a score. New variants must include an accessible keyboard path to secondary actions. Any gesture must have a visible control alternative. Keep the card/data explorer independent of project-specific state. Validate Playwright real-browser round trips rather than trusting typechecks alone.
