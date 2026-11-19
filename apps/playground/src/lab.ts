@@ -10,6 +10,7 @@ export type Item = {
   id: string; title: string; description: string; details: string; surface: string;
   capabilities: Capability[]; prioritized: boolean; selected: boolean; dismissed: boolean; completed: boolean;
   variant: 'task' | 'approval' | 'notice' | 'incident' | 'report'; status: string; metadata: string; actionLabel: string;
+  feedbackPhase: 'idle' | 'pending' | 'success' | 'error'; feedbackMessage: string;
 };
 export type AgentEvent = {type: string; [key: string]: unknown};
 export type LabTrace = {sequence: number; direction: 'agent → UI' | 'UI → agent' | 'host'; time: string; payload: unknown};
@@ -34,7 +35,7 @@ const item = (id: string, title: string, description: string, details: string, s
   actionLabel = 'Open'): Item =>
   ({id, title, description, details, surface, capabilities: [...baseCapabilities],
     prioritized: false, selected: false, dismissed: false, completed: false,
-    variant, status, metadata, actionLabel});
+    variant, status, metadata, actionLabel, feedbackPhase: 'idle', feedbackMessage: ''});
 
 export function initialItems(scenario: ScenarioId): Item[] {
   switch (scenario) {
@@ -161,7 +162,7 @@ export class SimulatedAgent {
     return this.scenario === 'multi' ? ['alpha', 'beta'] : ['main'];
   }
   private component(itemData: Item): Record<string, unknown> {
-    const {id, title, description, capabilities, prioritized, selected, completed, variant, status, metadata, actionLabel} = itemData;
+    const {id, title, description, capabilities, prioritized, selected, completed, variant, status, metadata, actionLabel, feedbackPhase, feedbackMessage} = itemData;
     const makeAction = (name: string) => ({event: {name, context: {itemId: id}}});
     return {
       id: componentId('item', id),
@@ -170,6 +171,7 @@ export class SimulatedAgent {
       itemId: id, title, description: completed ? 'Action completed in simulator' : description,
       actionLabel: completed ? 'Completed' : actionLabel,
       variant, status: completed ? 'Completed' : status, metaLabel: metadata,
+      feedbackPhase, feedbackMessage,
       capabilities, prioritized, selected,
       children: [componentId('detail', id)],
       onDismiss: makeAction('dismiss_item'),
@@ -179,7 +181,8 @@ export class SimulatedAgent {
     };
   }
   private components(surface: string, limit = Number.POSITIVE_INFINITY): Record<string, unknown>[] {
-    const visible = this.state.items.filter(x => x.surface === surface && !x.dismissed).slice(0, limit);
+    const visible = this.state.items.filter(x => x.surface === surface && !x.dismissed)
+      .sort((a,b) => Number(b.prioritized) - Number(a.prioritized)).slice(0, limit);
     return [
       {id: 'root', component: 'Column', children: ['heading', ...(this.scenario === 'reports' ? ['reportTable'] : []), ...visible.map(x => componentId('item', x.id))]},
       {id: 'heading', component: 'Text', text: surface === 'main' ? SCENARIOS.find(x => x.id === this.scenario)?.name ?? 'Interaction Lab' : 'Agent ' + surface},
@@ -248,6 +251,10 @@ export class SimulatedAgent {
     if (this.inFlight.has(itemData.id)) {this.state.lastError = 'An action is already pending'; this.notify(); return false;}
     this.inFlight.add(itemData.id);
     const runId = this.start();
+    itemData.feedbackPhase = 'pending';
+    itemData.feedbackMessage = 'Waiting for simulated host…';
+    this.activity([{version: '1.0', updateComponents: {surfaceId: itemData.surface, components: this.components(itemData.surface)}}], itemData.surface);
+    this.notify();
     try {
       await this.wait();
       if (this.disposed) return false;
@@ -260,12 +267,24 @@ export class SimulatedAgent {
       if (action.name === 'prioritize_item') itemData.prioritized = !itemData.prioritized;
       if (action.name === 'select_item') itemData.selected = !itemData.selected;
       if (action.name === 'activate_item') itemData.completed = !itemData.completed;
+      itemData.feedbackPhase = 'success';
+      itemData.feedbackMessage = ({
+        dismiss_item: 'Dismissed by host',
+        prioritize_item: 'Priority saved',
+        select_item: 'Selection saved',
+        activate_item: 'Action completed by host',
+      } as Record<string, string>)[action.name] ?? 'Saved by host';
       this.activity([{version: '1.0', updateComponents: {surfaceId: itemData.surface, components: this.components(itemData.surface)}}], itemData.surface);
       this.stateEvent();
       this.finish(runId);
       return true;
     } catch (error) {
-      this.fail(runId, error instanceof Error ? error.message : 'Unknown simulator failure');
+      const message = error instanceof Error ? error.message : 'Unknown simulator failure';
+      itemData.feedbackPhase = 'error';
+      itemData.feedbackMessage = message;
+      this.activity([{version: '1.0', updateComponents: {surfaceId: itemData.surface, components: this.components(itemData.surface)}}], itemData.surface);
+      this.stateEvent();
+      this.fail(runId, message);
       return false;
     } finally {this.inFlight.delete(itemData.id);}
   }

@@ -23,6 +23,8 @@ export const InteractiveItemComponent = createComponentImplementation({
     metaLabel: DynamicStringSchema.optional(),
     prioritized: z.boolean().optional(),
     selected: z.boolean().optional(),
+    feedbackPhase: z.enum(['idle','pending','success','error']).optional(),
+    feedbackMessage: DynamicStringSchema.optional(),
     children: ChildListSchema.optional(),
     onDismiss: ActionSchema.optional(),
     onPrioritize: ActionSchema.optional(),
@@ -42,6 +44,8 @@ export const InteractiveItemComponent = createComponentImplementation({
     metadata={props.metaLabel == null ? undefined : String(props.metaLabel)}
     prioritized={props.prioritized ?? false}
     selected={props.selected ?? false}
+    feedbackPhase={props.feedbackPhase ?? 'idle'}
+    feedbackMessage={props.feedbackMessage == null ? undefined : String(props.feedbackMessage)}
     details={props.children?.map(ref => typeof ref === 'string'
       ? buildChild(ref)
       : buildChild(ref.id, ref.basePath))}

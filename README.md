@@ -4,6 +4,14 @@ Reusable semantic interactions for agent-generated interfaces. A small TypeScrip
 
 **Status:** 0.1.0 starter. API and catalog are experimental and have not been published to npm. The engine is tested with Node's built-in test runner. React/A2UI integration requires dependency installation and an end-to-end test with your application.
 
+## Interaction Kit v0.3: host-confirmed feedback and natural motion
+
+The reusable `InteractiveItem` now accepts optional `feedbackPhase` (`idle`, `pending`, `success`, `error`) and `feedbackMessage` props. These are supplied by the owning host through A2UI, so gestures never imply successful backend writes on their own. Pending actions disable conflicting controls; completed actions display host-confirmed feedback; failures remain visible with the item available to retry.
+
+Motion is opt-in via progressive browser support: the kit exports `withInteractionTransition(update)` from `@danejw/a2ui-interaction-kit/react`. Hosts can wrap **synchronous React state updates** in it to animate insertion, dismissal and priority-based reordering using the native View Transitions API. Unsupported browsers and reduced-motion preferences get normal synchronous updates. Stable motion names are generated with `interactionMotionId(itemId)`, which requires item IDs to be unique among simultaneously displayed cards.
+
+The lab now demonstrates gesture-follow and springback, expandable details, subtle priority feedback, host-side pending/rejection/acknowledgement, undo and reduced-motion behavior. These enhancements remain usable by other A2UI applications through the same catalog.
+
 ## Interaction Lab v2: composable interaction patterns
 
 The lab now offers **nine deterministic scenarios** spanning task, approval, notification, incident, and report cards, plus a separate **InteractiveDataTable** component with local search, column sorting, row selection and detail expansion. InteractiveItem has a contextual primary action, accessible overflow menu, selection, priority toggle, swipe feedback and dismiss/undo support.

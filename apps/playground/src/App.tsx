@@ -1,10 +1,12 @@
 import * as React from 'react';
+import {flushSync} from 'react-dom';
 import {A2uiSurface} from '@a2ui/react';
 import {MessageProcessor} from '@a2ui/web_core';
 import {basicCatalog} from '@a2ui/web_core/catalogs/basic/v1';
 import {interactionCatalog} from '@danejw/a2ui-interaction-kit/a2ui/react';
+import {withInteractionTransition} from '@danejw/a2ui-interaction-kit/react';
 import '@danejw/a2ui-interaction-kit/react/styles.css';
-import {SCENARIOS, SimulatedAgent, replayRecording, validateRecording, type AgentEvent, type LabRecord, type LabTrace, type ScenarioId} from './lab';
+import {SCENARIOS, SimulatedAgent, parseAction, replayRecording, validateRecording, type AgentEvent, type LabRecord, type LabTrace, type ScenarioId} from './lab';
 import './styles.css';
 
 const format = (value: unknown) => JSON.stringify(value, null, 2);
@@ -48,6 +50,25 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
   const [scenarioSearch, setScenarioSearch] = React.useState('');
   const [traceSearch, setTraceSearch] = React.useState('');
   const [message, setMessage] = React.useState<string | null>(null);
+  const [notice, setNotice] = React.useState<{kind: 'success' | 'error'; text: string; id: number} | null>(null);
+  const [undoBusy, setUndoBusy] = React.useState(false);
+  const noticeId = React.useRef(0);
+  const showNotice = React.useCallback((kind: 'success' | 'error', text: string) => {
+    setNotice({kind, text, id: ++noticeId.current});
+  }, []);
+  React.useEffect(() => {
+    if (!notice) return;
+    const timeout = window.setTimeout(() => setNotice(null), 3200);
+    return () => window.clearTimeout(timeout);
+  }, [notice]);
+  const undo = React.useCallback(async () => {
+    if (undoBusy) return;
+    setUndoBusy(true);
+    try {
+      const ok = await agent.undoLast();
+      showNotice(ok ? 'success' : 'error', ok ? 'Dismissal undone' : agent.snapshot.lastError ?? 'Undo was rejected');
+    } finally {setUndoBusy(false);}
+  }, [agent, undoBusy, showNotice]);
   const fileInput = React.useRef<HTMLInputElement>(null);
   const step = React.useRef(0);
   const addTrace = React.useCallback((direction: LabTrace['direction'], payload: unknown) => {
@@ -61,10 +82,24 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
       setMessage('Replay is read-only. Reset the scenario to try actions.');
       return;
     }
-    void agent.submitAction(action).then(ok =>
-      addTrace('host', {type: ok ? 'ACTION_ACK' : 'ACTION_REJECTED', action}));
+    const request = parseAction(action);
+    void agent.submitAction(action).then(ok => {
+      addTrace('host', {type: ok ? 'ACTION_ACK' : 'ACTION_REJECTED', action});
+      if (ok && request?.name === 'dismiss_item') return;
+      if (!ok) {
+        // Host failure is already shown in the card and simulator error banner.
+        // Avoid announcing the same failure a third time.
+        return;
+      } else {
+        const labels: Record<string, string> = {
+          prioritize_item: 'Priority saved', select_item: 'Selection saved',
+          activate_item: 'Action completed',
+        };
+        showNotice('success', labels[request?.name ?? ''] ?? 'Action saved');
+      }
+    });
 
-  }), [agent, addTrace, playback]);
+  }), [agent, addTrace, playback, showNotice]);
 
   React.useEffect(() => {
     let live = true;
@@ -81,8 +116,10 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
       const ops = (content as {a2ui_operations?: unknown}).a2ui_operations;
       if (!Array.isArray(ops)) return;
       try {
-        processor.processMessages(ops as Parameters<typeof processor.processMessages>[0]);
-        sync();
+        withInteractionTransition(() => flushSync(() => {
+          processor.processMessages(ops as Parameters<typeof processor.processMessages>[0]);
+          sync();
+        }));
       } catch (error) {
         const cause = error instanceof Error ? error.message : 'A2UI processor rejected the event';
         setMessage(cause);
@@ -239,10 +276,16 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
             </label>
           </div>
         </details>
-        {agentState.lastError && <div role="alert" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
+        {agentState.lastError && <div role="status" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
             <button type="button" aria-label="Dismiss error" onClick={() => agent.clearError()}>×</button></div>}
           {message && <div role="status" className="alert">{message}
             <button type="button" aria-label="Dismiss message" onClick={() => setMessage(null)}>×</button></div>}
+          {notice && <div key={notice.id} className={'action-notice is-' + notice.kind}
+            role={notice.kind === 'error' ? 'alert' : 'status'} aria-live="polite">
+            <span className="action-notice-icon" aria-hidden="true">{notice.kind === 'success' ? '✓' : '!'}</span>
+            <span>{notice.text}</span>
+            <button type="button" aria-label="Dismiss notification" onClick={() => setNotice(null)}>×</button>
+          </div>}
 
         <section className="canvas-panel" aria-label="Rendered A2UI preview">
           <div className="canvas-toolbar">
@@ -267,7 +310,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
           </div>
           {agent.canUndo && !playback && <div className="undo-toast" role="status" aria-live="polite">
             <span><span aria-hidden="true">✓</span> Item dismissed</span>
-            <button type="button" onClick={() => void agent.undoLast()}>Undo dismiss ↶</button>
+            <button type="button" disabled={undoBusy} onClick={() => void undo()}>{undoBusy ? 'Undoing…' : 'Undo dismiss ↶'}</button>
           </div>}
           <div className="canvas-footer"><span className="gesture-guide">Swipe a card left to dismiss · Tap ··· for more actions</span><span>◇ Actual A2UI renderer + Interaction Kit</span>
             <span>{playback ? 'Replay view · read-only' : '✓ Host-verified state updates'}</span></div>

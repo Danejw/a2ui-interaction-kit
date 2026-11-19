@@ -147,3 +147,30 @@
 @media(max-width:790px){
   .canvas-footer .gesture-guide{display:block;width:100%;font-size:11px;font-weight:650;color:#b1caf1;padding-bottom:5px}
 }
+
+/* Host-confirmed interaction feedback and motion. */
+.action-notice{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;margin:0 0 15px;
+  border:1px solid #376d61;border-radius:11px;
+  background:#12362f;color:#c3f3df;
+  font-weight:700;font-size:12px;
+  animation:a2ui-notice-in 200ms cubic-bezier(.2,.8,.2,1) both;
+}
+.action-notice.is-error{background:#3c222c;border-color:#945263;color:#ffced8}
+.action-notice-icon{display:grid;place-items:center;border-radius:50%;width:22px;height:22px;background:#257a59;color:#fff}
+.action-notice.is-error .action-notice-icon{background:#b75867}
+.action-notice button{margin-left:auto;border:0;background:transparent;color:inherit;font-size:19px;cursor:pointer;min-width:34px;min-height:34px}
+@keyframes a2ui-notice-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+/* Native view transitions animate insertions, removals and priority-based reordering.
+   Browsers without the API keep the exact same DOM and host state updates. */
+::view-transition-group(*){animation-duration:220ms;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+::view-transition-old(*),::view-transition-new(*){animation-duration:220ms}
+@media(max-width:790px){
+  .action-notice{font-size:11px;padding:10px}
+  .action-notice button{min-height:44px;min-width:44px}
+}
+@media(prefers-reduced-motion:reduce){
+  .action-notice{animation:none!important}
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation-duration:0s!important}
+}

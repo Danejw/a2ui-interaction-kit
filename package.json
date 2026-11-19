@@ -1,6 +1,6 @@
 {
   "name": "@danejw/a2ui-interaction-kit",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": false,
   "description": "Composable interactions for agent-generated A2UI interfaces",
   "type": "module",

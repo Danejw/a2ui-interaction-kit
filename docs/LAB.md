@@ -47,3 +47,22 @@ On mobile, use the sticky **Live preview** and **Event trace** tabs. The inspect
 ### Repeatable UX evaluation
 
 The original review baseline was **75/100 (B-)** using these categories: visual design (20), usability/navigation (25), interaction experience (25), mobile responsiveness (20), and reliability/testing (10). Each subsequent review must retain the same weighting, verify the deployed page on desktop and mobile, and distinguish results observed through actual browser interactions from assumptions. A 100/100 score is a quality target, never automatically claimed from test success.
+
+## Motion and feedback verification (v0.3)
+
+`InteractiveItem.feedbackPhase` and `feedbackMessage` are host-authored A2UI properties. The deterministic agent emits a pending activity update **before** its simulated delay, then emits a success/error update only after authoritative validation. The host does not remove a dismissed card until it accepts the action. Prioritized items move to the top after acknowledgement; the renderer wraps A2UI operations in a progressive native View Transition. Local drag movement previews a left swipe and springs back if cancelled.
+
+For each scenario, test the same flow with **Instant** and **900ms** simulated latency; toggle **Fail next action** and **Deny writes** and confirm that the UI never reports success on rejection. Then enable reduced-motion settings and verify that the interactions remain understandable and operable without animation.
+
+### Physical-device smoke test (remaining manual gate)
+
+CI emulates touch pointers and narrow viewports, but cannot prove physical touch ergonomics. On an actual Android phone:
+- Swipe left slowly, release short of the threshold and verify smooth restoration.
+- Swipe past the dismiss threshold and verify host acknowledgement plus Undo.
+- Scroll the page vertically starting on a card and verify it does not unintentionally dismiss.
+- Repeat in reduced-motion mode (system accessibility setting).
+- Try focus navigation and screen reader if available, including the error/retry and undo flows.
+- Rotate device and switch Preview/Trace tabs; check for focus loss, clipped text, horizontal overflow, delayed responses, and animation jank.
+- Record device model, browser version, outcome, and any mismatch in an issue.
+
+The target is 100/100 against the existing weighted rubric only after verifying the actual deployed layout and those device-specific behavior checks. Model-agnostic live agent integration is a separate future milestone.
