@@ -262,3 +262,23 @@ test('reduced-motion mode disables card entrance animation', async ({page}) => {
   const animation=await page.locator('[data-item-id="match-01"]').evaluate(e=>getComputedStyle(e).animationDuration);
   expect(animation).toBe('0s');
 });
+
+test('vertical touch scrolling is never mistaken for a dismiss gesture', async ({page}) => {
+  const card=page.locator('[data-item-id="match-01"]');
+  await card.dispatchEvent('pointerdown',{pointerType:'touch',clientX:260,clientY:160});
+  await card.dispatchEvent('pointermove',{pointerType:'touch',clientX:250,clientY:255});
+  await card.dispatchEvent('pointerup',{pointerType:'touch',clientX:250,clientY:255});
+  await expect(card).toBeVisible();
+  await expect(card).not.toHaveClass(/is-dragging|is-committing/);
+  await expect(page.getByRole('button',{name:/Undo dismiss/})).toHaveCount(0);
+});
+
+test('rapid AG-UI surface updates do not produce view-transition interruption errors', async ({page}) => {
+  const errors: string[]=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  await page.getByRole('button',{name:'Streaming Updates'}).click();
+  await expect(page.locator('[data-item-id="stream-03"]')).toBeVisible();
+  await page.locator('[data-item-id="stream-02"]').getByRole('button',{name:'Prioritize'}).click();
+  await expect(page.locator('[data-item-id="stream-02"]').getByRole('button',{name:'Prioritized'})).toBeVisible();
+  expect(errors.filter(e=>e.toLowerCase().includes('viewtransition')||e.includes('Transition was skipped'))).toEqual([]);
+});
