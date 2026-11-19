@@ -186,7 +186,7 @@ test('card swipe background is concealed until an actual swipe begins', async ({
   });
   expect(metrics.cardPadding).toBe('0px');
   expect(metrics.bodyRight).toBeGreaterThanOrEqual(metrics.hintRight-2);
-  expect(metrics.swipe).toMatch(/none|matrix\\(1, 0, 0, 1, 0, 0\\)/);
+  expect(metrics.swipe).toBe('matrix(1, 0, 0, 1, 0, 0)');
 });
 
 test('A2UI rendered surface heading has readable text contrast', async ({page}) => {
