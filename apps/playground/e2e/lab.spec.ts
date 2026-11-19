@@ -32,6 +32,9 @@ test('A2UI item expands, prioritizes, dismisses and undoes', async ({page}) => {
 test('A2UI outbound actions and AG-UI activity updates appear in inspector', async ({page}) => {
   await page.locator('[data-item-id="match-01"]').getByRole('button',{name:'Select'}).click();
   await expect(page.locator('[data-item-id="match-01"]').getByRole('button',{name:'Selected'})).toBeVisible();
+  if (page.viewportSize()?.width && page.viewportSize()!.width < 791) {
+    await page.getByRole('tab',{name:/Event trace/}).click();
+  }
   await expect(page.getByText('User interaction').first()).toBeVisible();
   await expect(page.getByText('A2UI surface update').first()).toBeVisible();
 });
@@ -40,10 +43,12 @@ test('simulated backend failure is visible and retry succeeds', async ({page}) =
   await page.getByRole('button',{name:'Error & Recovery'}).click();
   const card=page.locator('[data-item-id="retry-01"]');
   await expect(card).toBeVisible();
-  await card.getByRole('button',{name:'Dismiss'}).click();
+  await card.getByRole('button',{name:'Item actions'}).click();
+  await card.getByRole('menuitem',{name:'Dismiss'}).click();
   await expect(page.getByRole('alert')).toContainText('Simulated backend failure');
   await expect(card).toBeVisible();
-  await card.getByRole('button',{name:'Dismiss'}).click();
+  await card.getByRole('button',{name:'Item actions'}).click();
+  await card.getByRole('menuitem',{name:'Dismiss'}).click();
   await expect(card).toHaveCount(0);
 });
 
@@ -51,7 +56,8 @@ test('permission denial cannot remove an item', async ({page}) => {
   await page.getByRole('button',{name:'Permission Denied'}).click();
   const card=page.locator('[data-item-id="restricted-01"]');
   await expect(card).toBeVisible();
-  await card.getByRole('button',{name:'Dismiss'}).click();
+  await card.getByRole('button',{name:'Item actions'}).click();
+  await card.getByRole('menuitem',{name:'Dismiss'}).click();
   await expect(page.getByRole('alert')).toContainText('Permission denied');
   await expect(card).toBeVisible();
 });
@@ -83,7 +89,8 @@ test('keyboard users can trigger interactions without gestures', async ({page}) 
 
 test('resets the scenario to its initial authoritative state', async ({page}) => {
   const card=page.locator('[data-item-id="match-01"]');
-  await card.getByRole('button',{name:'Dismiss'}).click();
+  await card.getByRole('button',{name:'Item actions'}).click();
+  await card.getByRole('menuitem',{name:'Dismiss'}).click();
   await expect(card).toHaveCount(0);
   await page.getByRole('button',{name:'Reset lab'}).click();
   await expect(page.locator('[data-item-id="match-01"]')).toBeVisible();
@@ -132,4 +139,18 @@ test('secondary actions are keyboard accessible through an explicit menu', async
   await card.getByRole('menuitem',{name:'Dismiss'}).focus();
   await page.keyboard.press('Enter');
   await expect(card).toHaveCount(0);
+});
+
+test('the A2UI data explorer sorts, filters, selects and expands real data', async ({page}) => {
+  await page.getByRole('button',{name:'Review Board'}).click();
+  const explorer=page.getByRole('region',{name:'Agent activity overview table'});
+  await expect(explorer.getByRole('table')).toBeVisible();
+  await explorer.getByRole('button',{name:'Sort by Duration'}).click();
+  await page.getByRole('searchbox',{name:'Search table rows'}).fill('Beta');
+  await expect(explorer.getByText('Agent Beta')).toBeVisible();
+  await expect(explorer.getByText('Agent Alpha')).toHaveCount(0);
+  await explorer.getByRole('button',{name:'View details for Agent Beta'}).click();
+  await expect(explorer.getByText('Three shortlisted candidates')).toBeVisible();
+  await explorer.getByRole('checkbox',{name:'Select Agent Beta'}).check();
+  await expect(page.locator('.a2ui-data-table__footer')).toContainText('1 selected');
 });
