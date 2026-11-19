@@ -201,7 +201,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
               <div className="device-header"><span className="window-dots">● ● ●</span><span>Agent Workspace</span><span className="window-side">SIMULATED</span></div>
               <div className="rendered-surfaces" data-testid="rendered-surfaces">
                 {surfaces.length ? surfaces.map(surface => <div key={surface.id} className="surface" data-surface-id={surface.id}>
-                  <A2uiSurface surface={surface}/>
+                  <A2uiSurface surface={surface as React.ComponentProps<typeof A2uiSurface>['surface']}/>
                 </div>) : <div className="waiting"><div className="spinner"/><strong>Waiting for agent output</strong><span>AG-UI events will populate this surface.</span></div>}
               </div>
             </div>
