@@ -117,3 +117,27 @@
 }
 @media(max-width:390px){.top-actions .button{padding:8px 9px}.identity small{font-size:9px}.intro h1{font-size:27px}.rendered-surfaces{padding:8px}.scenario{min-width:98px}.device-header .window-side{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+
+/* Preserve card encapsulation when rendered inside a third-party A2UI surface.
+   The old playground card selector applied 14px outer padding, exposing the
+   red swipe dismissal track even with a zero-offset gesture. */
+.surface .a2ui-interaction-item {
+  padding: 0;
+  overflow: visible;
+  border-color: #e3e9f3;
+  border-radius: 16px;
+  box-shadow: 0 5px 17px rgba(25,48,88,.045);
+}
+.surface .a2ui-interaction-item__body {
+  background: #fff;
+  border-radius: 15px;
+}
+.surface a2ui-basic-text .a2ui-text,
+.surface a2ui-basic-text .no-markdown-renderer {
+  color: #354761;
+}
+/* Offscreen and unrevealed swipe actions never leak through the card edge. */
+.surface .a2ui-interaction-item__swipe-hint {
+  border-radius: 0 15px 15px 0;
+}
