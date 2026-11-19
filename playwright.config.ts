@@ -11,7 +11,7 @@ export default defineConfig({
   projects: [{name: 'chromium', use: {...devices['Desktop Chrome']}},
     {name: 'mobile-chromium', use: {...devices['Pixel 7']}}],
   webServer: {
-    command: 'npm run dev:lab -- --host 127.0.0.1',
+    command: 'npm run dev:lab',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

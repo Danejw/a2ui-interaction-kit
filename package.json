@@ -47,7 +47,7 @@
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build && node scripts/validate-catalog.mjs",
     "prepare": "npm run build",
-    "dev:lab": "npm run dev --workspace @danejw/interaction-lab",
+    "dev:lab": "npm run dev --workspace @danejw/interaction-lab -- --host 127.0.0.1",
     "build:lab": "npm run build && npm run build --workspace @danejw/interaction-lab",
     "typecheck:lab": "npm run typecheck --workspace @danejw/interaction-lab",
     "test:lab": "node --experimental-strip-types --test apps/playground/tests/*.test.ts",
