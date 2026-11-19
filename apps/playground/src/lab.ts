@@ -97,6 +97,7 @@ export class SimulatedAgent {
   get snapshot(): LabState { return clone(this.state); }
   get recording(): LabRecord {return {format: 'interaction-lab-recording', version: 1, scenario: this.scenario, events: clone(this.events)};}
   get canUndo(): boolean {return this.previousDismissedId !== null;}
+  clearError(): void {this.state.lastError = null; this.notify();}
   subscribe(listener: EventListener): () => void {this.listeners.add(listener); return () => this.listeners.delete(listener);}
   subscribeState(listener: StateListener): () => void {this.stateListeners.add(listener); return () => this.stateListeners.delete(listener);}
   dispose(): void {this.disposed = true; this.listeners.clear(); this.stateListeners.clear();}

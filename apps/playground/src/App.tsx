@@ -102,7 +102,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
     (traceFilter === 'actions' && x.direction !== 'agent → UI'));
 
   const exportRecording = () => {
-    const json = JSON.stringify(agent.recording, null, 2);
+    const json = JSON.stringify(playback ?? agent.recording, null, 2);
     const url = URL.createObjectURL(new Blob([json], {type: 'application/json'}));
     const element = document.createElement('a');
     element.href = url; element.download = 'interaction-lab-' + scenario + '.json';
@@ -179,7 +179,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
             </label>
           </div>
           {agentState.lastError && <div role="alert" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
-            <button type="button" aria-label="Dismiss error" onClick={() => setMessage(null)}>×</button></div>}
+            <button type="button" aria-label="Dismiss error" onClick={() => agent.clearError()}>×</button></div>}
           {message && <div role="status" className="alert">{message}
             <button type="button" aria-label="Dismiss message" onClick={() => setMessage(null)}>×</button></div>}
         </section>
@@ -240,7 +240,7 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
         </div>
         <div className="inspector-footer">
           <button type="button" className="button button-quiet" onClick={() => fileInput.current?.click()}>Import recording</button>
-          <button type="button" className="button button-quiet" onClick={() => void agent.run()} disabled={agentState.running || Boolean(playback)}>Run again</button>
+          <button type="button" className="button button-quiet" onClick={onReset} disabled={agentState.running}>Run again</button>
           <input hidden ref={fileInput} type="file" accept="application/json,.json" onChange={importRecording}/>
         </div>
       </aside>
