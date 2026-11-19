@@ -154,3 +154,19 @@ test('the A2UI data explorer sorts, filters, selects and expands real data', asy
   await explorer.getByRole('checkbox',{name:'Select Agent Beta'}).check();
   await expect(page.locator('.a2ui-data-table__footer')).toContainText('1 selected');
 });
+
+test('mobile viewport does not overflow horizontally', async ({page},testInfo) => {
+  test.skip(!testInfo.project.name.includes('mobile'), 'Mobile-only layout');
+  const widths=await page.evaluate(()=>({viewport:document.documentElement.clientWidth,content:document.documentElement.scrollWidth}));
+  expect(widths.content).toBeLessThanOrEqual(widths.viewport+1);
+});
+
+test('menu closes on Escape and returns focus to its trigger', async ({page}) => {
+  const card=page.locator('[data-item-id="match-01"]');
+  const trigger=card.getByRole('button',{name:'Item actions'});
+  await trigger.click();
+  await expect(card.getByRole('menuitem',{name:'Dismiss'})).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(card.getByRole('menuitem',{name:'Dismiss'})).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
