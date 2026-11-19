@@ -150,7 +150,7 @@ export class SimulatedAgent {
     return {
       id: componentId('item', id),
       component: 'InteractiveItem',
-      '@catalogId': INTERACTION_CATALOG_ID,
+      'catalogId': INTERACTION_CATALOG_ID,
       itemId: id, title, description: completed ? 'Approved in simulator' : description,
       actionLabel: 'Approve',
       capabilities, prioritized, selected,
