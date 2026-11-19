@@ -165,3 +165,17 @@
   .a2ui-interaction-item__feedback{border:1px solid CanvasText}
   .a2ui-interaction-item.is-selected{outline:2px solid Highlight}
 }
+
+/* Consistent touch ergonomics across card and table primitives. */
+@media(pointer:coarse){
+  .a2ui-interaction-item__icon-button{min-width:44px;min-height:44px}
+  .a2ui-interaction-item__primary,.a2ui-interaction-item__text-button{min-height:44px}
+  .a2ui-interaction-item__menu button{min-height:44px}
+  .a2ui-data-table__expand,.a2ui-data-table th button{min-height:44px}
+  .a2ui-data-table__footer button{min-height:44px}
+  .a2ui-data-table td:first-child{min-width:44px}
+}
+/* Progressive keyboard and contrast behavior for reusable controls. */
+.a2ui-data-table button:focus-visible,.a2ui-data-table input:focus-visible{
+  outline:2px solid #386fe1;outline-offset:2px;
+}
