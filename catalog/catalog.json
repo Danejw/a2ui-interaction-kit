@@ -5,40 +5,103 @@
   "protocolVersion": "1.0",
   "title": "A2UI Interaction Kit",
   "description": "Adds semantic, reusable interactions to agent-generated interfaces.",
-  "instructions": "Use InteractiveItem for agent tasks, approvals, opportunities, and actionable rows. Declare only supported capabilities. An external capability is actionable only when its matching on* Action property is supplied. Use stable itemId values. The host application owns authorization, backend persistence, and all data mutations. Prefer reversible actions where available; never interpret dismiss as delete. Do not invent tool names or claim an interaction succeeded before the application confirms it.",
+  "instructions": "Use InteractiveItem for tasks, approvals, notices, incidents and reports. Pick a contextual variant, status, metadata and primary actionLabel. Declare capabilities only when the host supports them and bind actions to registered handlers. Keep secondary actions in accessible menus and always provide semantic buttons alongside gestures. The host owns authorization and mutation acknowledgement. Never assume dismiss deletes underlying data.",
   "components": {
     "InteractiveItem": {
       "type": "object",
-      "description": "A task or information card with accessible controls, touch swipe-to-dismiss, optional details, prioritization, selection and an application action.",
+      "description": "Interactive task, notification, approval, incident or report with contextual primary action, menu, touch gestures, selection, priority and details.",
       "properties": {
-        "component": {"const": "InteractiveItem"},
-        "itemId": {"$ref": "common_types.json#/$defs/DynamicString"},
-        "title": {"$ref": "common_types.json#/$defs/DynamicString"},
-        "description": {"$ref": "common_types.json#/$defs/DynamicString"},
-        "actionLabel": {"$ref": "common_types.json#/$defs/DynamicString"},
+        "component": {
+          "const": "InteractiveItem"
+        },
+        "itemId": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "description": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "actionLabel": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
         "capabilities": {
           "type": "array",
           "uniqueItems": true,
-          "items": {"enum": ["expandable", "dismissible", "prioritizable", "selectable", "actionable"]}
+          "items": {
+            "enum": [
+              "expandable",
+              "dismissible",
+              "prioritizable",
+              "selectable",
+              "actionable"
+            ]
+          }
         },
-        "prioritized": {"type": "boolean"},
-        "selected": {"type": "boolean"},
-        "children": {"$ref": "common_types.json#/$defs/ChildList"},
-        "onDismiss": {"$ref": "common_types.json#/$defs/Action"},
-        "onPrioritize": {"$ref": "common_types.json#/$defs/Action"},
-        "onSelect": {"$ref": "common_types.json#/$defs/Action"},
-        "onActivate": {"$ref": "common_types.json#/$defs/Action"},
-        "onExpand": {"$ref": "common_types.json#/$defs/Action"}
+        "prioritized": {
+          "type": "boolean"
+        },
+        "selected": {
+          "type": "boolean"
+        },
+        "children": {
+          "$ref": "common_types.json#/$defs/ChildList"
+        },
+        "onDismiss": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "onPrioritize": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "onSelect": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "onActivate": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "onExpand": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "task",
+            "approval",
+            "notice",
+            "incident",
+            "report"
+          ]
+        },
+        "status": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "metadata": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        }
       },
-      "required": ["component", "itemId", "title", "capabilities"],
+      "required": [
+        "component",
+        "itemId",
+        "title",
+        "capabilities"
+      ],
       "unevaluatedProperties": false
     }
   },
   "$defs": {
     "anyComponent": {
-      "oneOf": [{"$ref": "#/components/InteractiveItem"}],
-      "discriminator": {"propertyName": "component"}
+      "oneOf": [
+        {
+          "$ref": "#/components/InteractiveItem"
+        }
+      ],
+      "discriminator": {
+        "propertyName": "component"
+      }
     },
-    "anyFunction": {"not": {}}
+    "anyFunction": {
+      "not": {}
+    }
   }
 }

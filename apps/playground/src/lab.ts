@@ -4,11 +4,12 @@ export const BASIC_CATALOG_ID = 'https://a2ui.org/specification/v1_0/catalogs/ba
 export const INTERACTION_CATALOG_ID = 'https://github.com/Danejw/a2ui-interaction-kit/blob/main/catalog/catalog.json';
 
 export type Capability = 'expandable' | 'dismissible' | 'prioritizable' | 'selectable' | 'actionable';
-export type ScenarioId = 'mission' | 'approvals' | 'recovery' | 'permissions' | 'streaming' | 'multi' | 'stress';
+export type ScenarioId = 'mission' | 'approvals' | 'recovery' | 'permissions' | 'streaming' | 'multi' | 'stress' | 'inbox' | 'reports';
 export type Scenario = {id: ScenarioId; name: string; description: string; category: string};
 export type Item = {
   id: string; title: string; description: string; details: string; surface: string;
   capabilities: Capability[]; prioritized: boolean; selected: boolean; dismissed: boolean; completed: boolean;
+  variant: 'task' | 'approval' | 'notice' | 'incident' | 'report'; status: string; metadata: string; actionLabel: string;
 };
 export type AgentEvent = {type: string; [key: string]: unknown};
 export type LabTrace = {sequence: number; direction: 'agent → UI' | 'UI → agent' | 'host'; time: string; payload: unknown};
@@ -23,27 +24,32 @@ export const SCENARIOS: Scenario[] = [
   {id: 'streaming', name: 'Streaming Updates', description: 'Create an A2UI surface, then send incremental component and data updates.', category: 'Protocol'},
   {id: 'multi', name: 'Multiple Surfaces', description: 'Independent surface IDs, cards, actions, and state.', category: 'Protocol'},
   {id: 'stress', name: 'Stress Test', description: '30 interactive items and repeated dispatch protection.', category: 'Performance'},
+  {id: 'inbox', name: 'Notification Inbox', description: 'Triage notices and alerts with contextual actions.', category: 'Patterns'},
+  {id: 'reports', name: 'Review Board', description: 'Compare mixed report, task and approval patterns.', category: 'Patterns'},
 ];
 
 const baseCapabilities: Capability[] = ['expandable', 'dismissible', 'prioritizable', 'selectable', 'actionable'];
-const item = (id: string, title: string, description: string, details: string, surface = 'main'): Item =>
+const item = (id: string, title: string, description: string, details: string, surface = 'main',
+  variant: Item['variant'] = 'task', status = 'In progress', metadata = 'Agent workspace',
+  actionLabel = 'Open'): Item =>
   ({id, title, description, details, surface, capabilities: [...baseCapabilities],
-    prioritized: false, selected: false, dismissed: false, completed: false});
+    prioritized: false, selected: false, dismissed: false, completed: false,
+    variant, status, metadata, actionLabel});
 
 export function initialItems(scenario: ScenarioId): Item[] {
   switch (scenario) {
     case 'mission': return [
-      item('match-01', 'Contractor match review', '3 candidates need approval', 'Compare qualifications, license classification and project fit.'),
-      item('ingest-02', 'Document ingestion', 'A worker needs your attention', 'Inspect download attempts, HTTP responses and evidence.'),
-      item('plan-03', 'Website migration plan', 'Ready for your review', 'Review scope, migration checklist and deployment strategy.'),
-      item('agent-04', 'Outreach follow-up', '12 replies reviewed', 'Check follow-up drafts before scheduling the next outreach batch.'),
+      item('match-01', 'Contractor match review', '3 candidates need approval', 'Compare qualifications, license classification and project fit.', 'main', 'approval', 'Needs review', '3 candidates', 'Review'),
+      item('ingest-02', 'Document ingestion', 'A worker needs your attention', 'Inspect download attempts, HTTP responses and evidence.', 'main', 'incident', 'Blocked', 'Worker #02', 'Inspect'),
+      item('plan-03', 'Website migration plan', 'Ready for your review', 'Review scope, migration checklist and deployment strategy.', 'main', 'report', 'Ready', 'Draft v3', 'Review'),
+      item('agent-04', 'Outreach follow-up', '12 replies reviewed', 'Check follow-up drafts before scheduling the next outreach batch.', 'main', 'task', 'Running', '12 replies', 'Inspect'),
     ];
     case 'approvals': return [
-      item('approval-01', 'Approve shortlist', 'Three candidates are ready', 'Approval only changes this simulated task.'),
-      item('approval-02', 'Approve implementation plan', 'Awaiting sign-off', 'Review the scope and expected outcomes.'),
+      item('approval-01', 'Approve shortlist', 'Three candidates are ready', 'Approval only changes this simulated task.', 'main', 'approval', 'Needs review', '3 candidates', 'Approve'),
+      item('approval-02', 'Approve implementation plan', 'Awaiting sign-off', 'Review the scope and expected outcomes.', 'main', 'approval', 'Pending', 'Plan v2', 'Approve'),
     ];
-    case 'recovery': return [item('retry-01', 'Retry document download', 'First attempt will fail', 'The simulator fails the next operation so the UI can demonstrate recovery.')];
-    case 'permissions': return [item('restricted-01', 'Restricted operation', 'Authorization denied by the host', 'The UI can request an action, but the host must still reject it.')];
+    case 'recovery': return [item('retry-01', 'Retry document download', 'First attempt will fail', 'The simulator fails the next operation so the UI can demonstrate recovery.', 'main','incident','Needs attention','Failed request','Retry')];
+    case 'permissions': return [item('restricted-01', 'Restricted operation', 'Authorization denied by the host', 'The UI can request an action, but the host must still reject it.', 'main','incident','Restricted','Policy gate','Request')];
     case 'streaming': return [
       item('stream-01', 'Collect agent outputs', 'First step', 'Additional items arrive after the initial A2UI surface.'),
       item('stream-02', 'Summarize verified results', 'Second step', 'Added through an incremental updateComponents message.'),
@@ -53,6 +59,16 @@ export function initialItems(scenario: ScenarioId): Item[] {
       item('left-01', 'Agent Alpha', 'Research is complete', 'This item belongs to its own A2UI surface.', 'alpha'),
       item('left-02', 'Agent Alpha report', 'Ready to review', 'Actions only affect this item.', 'alpha'),
       item('right-01', 'Agent Beta', 'Awaiting approval', 'This is a separate A2UI surface.', 'beta'),
+    ];
+    case 'inbox': return [
+      item('notice-01', 'Weekly review is ready', 'Your agents completed the scheduled review.', 'Includes 8 items, 3 decisions and supporting evidence.', 'main','notice','New','2 minutes ago','Read'),
+      item('notice-02', 'Integration permission updated', 'A connector requires reauthorization.', 'Host verification and permissions must be handled by the owning application.', 'main','incident','Action needed','10 minutes ago','Inspect'),
+      item('notice-03', 'Documentation refreshed', 'Protocol references have been updated.', 'Review the latest catalog reference and accepted versions.', 'main','notice','Read','Yesterday','Open'),
+    ];
+    case 'reports': return [
+      item('report-01','Agent performance report','Last 24 hours summarized','12 completed operations, 1 retry and 0 unverified tool effects.', 'main','report','Ready','Last 24 hours','View report'),
+      item('approval-03','Review generated proposal','Draft is waiting for human approval','Check the source evidence before you accept or request changes.', 'main','approval','Needs review','Draft #18','Review'),
+      item('task-05','Document reconciliation','2 files require attention','Inspect the A2UI action events and supporting document references.', 'main','task','Queued','2 files','Inspect'),
     ];
     case 'stress': return Array.from({length: 30}, (_, n) =>
       item('stress-' + String(n + 1).padStart(2, '0'), 'Task ' + (n + 1),
@@ -145,14 +161,15 @@ export class SimulatedAgent {
     return this.scenario === 'multi' ? ['alpha', 'beta'] : ['main'];
   }
   private component(itemData: Item): Record<string, unknown> {
-    const {id, title, description, details, capabilities, prioritized, selected, completed} = itemData;
+    const {id, title, description, capabilities, prioritized, selected, completed, variant, status, metadata, actionLabel} = itemData;
     const makeAction = (name: string) => ({event: {name, context: {itemId: id}}});
     return {
       id: componentId('item', id),
       component: 'InteractiveItem',
       'catalogId': INTERACTION_CATALOG_ID,
-      itemId: id, title, description: completed ? 'Approved in simulator' : description,
-      actionLabel: 'Approve',
+      itemId: id, title, description: completed ? 'Action completed in simulator' : description,
+      actionLabel: completed ? 'Completed' : actionLabel,
+      variant, status: completed ? 'Completed' : status, metadata,
       capabilities, prioritized, selected,
       children: [componentId('detail', id)],
       onDismiss: makeAction('dismiss_item'),
