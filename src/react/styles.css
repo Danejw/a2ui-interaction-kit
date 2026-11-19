@@ -116,7 +116,7 @@
   will-change:transform;
 }
 @keyframes a2ui-card-enter{
-  from{opacity:0;transform:translateY(9px) scale(.99)}
+  from{opacity:0;transform:translateY(9px)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
 .a2ui-interaction-item__body{
