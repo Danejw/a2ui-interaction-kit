@@ -238,11 +238,11 @@ function LabSession({scenario, onSelectScenario, onReset, playback, onPlay}: Ses
               </select>
             </label>
           </div>
-          {agentState.lastError && <div role="alert" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
+        </details>
+        {agentState.lastError && <div role="alert" className="alert error"><strong>Action failed:</strong> {agentState.lastError}
             <button type="button" aria-label="Dismiss error" onClick={() => agent.clearError()}>×</button></div>}
           {message && <div role="status" className="alert">{message}
             <button type="button" aria-label="Dismiss message" onClick={() => setMessage(null)}>×</button></div>}
-        </details>
 
         <section className="canvas-panel" aria-label="Rendered A2UI preview">
           <div className="canvas-toolbar">
