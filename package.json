@@ -5,14 +5,39 @@
   "description": "Composable interactions for agent-generated A2UI interfaces",
   "type": "module",
   "license": "MIT",
-  "repository": {"type":"git","url":"https://github.com/Danejw/a2ui-interaction-kit.git"},
-  "keywords": ["a2ui", "agent-ui", "react", "interaction", "gestures"],
-  "files": ["dist", "catalog", "README.md", "LICENSE"],
-  "sideEffects": ["./dist/react/styles.css"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Danejw/a2ui-interaction-kit.git"
+  },
+  "keywords": [
+    "a2ui",
+    "agent-ui",
+    "react",
+    "interaction",
+    "gestures"
+  ],
+  "files": [
+    "dist",
+    "catalog",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./dist/react/styles.css"
+  ],
   "exports": {
-    ".": {"types":"./dist/index.d.ts", "import":"./dist/index.js"},
-    "./react": {"types":"./dist/react/index.d.ts", "import":"./dist/react/index.js"},
-    "./a2ui/react": {"types":"./dist/a2ui/react.d.ts", "import":"./dist/a2ui/react.js"},
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./a2ui/react": {
+      "types": "./dist/a2ui/react.d.ts",
+      "import": "./dist/a2ui/react.js"
+    },
     "./react/styles.css": "./dist/react/styles.css",
     "./catalog.json": "./catalog/catalog.json"
   },
@@ -20,7 +45,8 @@
     "build": "tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "check": "npm run typecheck && npm test && npm run build && node scripts/validate-catalog.mjs"
+    "check": "npm run typecheck && npm test && npm run build && node scripts/validate-catalog.mjs",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "react": ">=18.2.0",
@@ -29,10 +55,18 @@
     "zod": "^3.25.0 || ^4.0.0"
   },
   "peerDependenciesMeta": {
-    "@a2ui/react": {"optional":true},
-    "@a2ui/web_core": {"optional":true},
-    "zod": {"optional":true},
-    "react": {"optional":true}
+    "@a2ui/react": {
+      "optional": true
+    },
+    "@a2ui/web_core": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@a2ui/react": "*",
@@ -42,5 +76,7 @@
     "typescript": "^5.8.3",
     "zod": "^3.25.0"
   },
-  "engines": {"node": ">=22.10.0"}
+  "engines": {
+    "node": ">=22.10.0"
+  }
 }

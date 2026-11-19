@@ -13,12 +13,12 @@ The MVP provides `expandable`, `dismissible`, `prioritizable`, `selectable`, and
 ## Quick start
 
 ```bash
-npm install @danejw/a2ui-interaction-kit react
-# For the A2UI adapter, also install versions of these packages supporting v1_0:
-npm install @a2ui/react @a2ui/web_core zod
+npm install github:Danejw/a2ui-interaction-kit
+# For A2UI integration, also install the renderer and its peer dependencies:
+npm install react @a2ui/react @a2ui/web_core zod
 ```
 
-The npm package name is reserved here as a future target. Until published, install from a cloned directory using `npm install /path/to/a2ui-interaction-kit` after building it, or use the source directly in a workspace.
+The package is not yet published to npm. The GitHub install runs the package `prepare` script to build `dist` automatically. You can also clone this repository, run `npm install && npm run build`, and install it from a local directory.
 
 ### Standalone React card
 
