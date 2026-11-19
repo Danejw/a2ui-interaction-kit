@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EventType} from '@ag-ui/core';
-import {initialItems, parseAction, replayRecording, SimulatedAgent, validateRecording, SCENARIOS} from '../src/lab.ts';
+import {componentId, initialItems, parseAction, replayRecording, SimulatedAgent, validateRecording, SCENARIOS} from '../src/lab.ts';
 
 const validAction = (name: string, itemId: string, surfaceId = 'main') =>
   ({version: '1.0', action: {name, surfaceId, sourceComponentId: 'item-' + itemId,
@@ -112,4 +112,13 @@ test('recording parser rejects unexpected or oversized content', () => {
 test('A2UI action shape is parsed without executing arbitrary input', () => {
   assert.deepEqual(parseAction(validAction('dismiss_item','match-01')), {name:'dismiss_item', itemId:'match-01', surfaceId:'main'});
   assert.equal(parseAction({action:{name:'dismiss_item',context:{itemId:42}}}), null);
+});
+
+test('A2UI component identifiers satisfy the v1.0 UAX #31 profile', () => {
+  for (const scenario of SCENARIOS) for (const item of initialItems(scenario.id)) {
+    for (const kind of ['item','detail'] as const) {
+      assert.match(componentId(kind,item.id), /^[A-Za-z][A-Za-z0-9]*$/);
+    }
+  }
+  assert.notEqual(componentId('item','a-b'),componentId('item','ab'));
 });

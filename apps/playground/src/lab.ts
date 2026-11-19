@@ -60,6 +60,12 @@ export function initialItems(scenario: ScenarioId): Item[] {
   }
 }
 
+/** Stable A2UI UAX #31 identifiers, independent of arbitrary business item IDs. */
+export function componentId(kind: 'item' | 'detail', itemId: string): string {
+  return kind + Array.from(new TextEncoder().encode(itemId),
+    byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
 export function parseAction(raw: unknown): {name: string; itemId: string; surfaceId?: string} | null {
   if (!raw || typeof raw !== 'object') return null;
   const payload = raw as Record<string, unknown>;
@@ -142,13 +148,13 @@ export class SimulatedAgent {
     const {id, title, description, details, capabilities, prioritized, selected, completed} = itemData;
     const makeAction = (name: string) => ({event: {name, context: {itemId: id}}});
     return {
-      id: 'item-' + id,
+      id: componentId('item', id),
       component: 'InteractiveItem',
       '@catalogId': INTERACTION_CATALOG_ID,
       itemId: id, title, description: completed ? 'Approved in simulator' : description,
       actionLabel: 'Approve',
       capabilities, prioritized, selected,
-      children: ['detail-' + id],
+      children: [componentId('detail', id)],
       onDismiss: makeAction('dismiss_item'),
       onPrioritize: makeAction('prioritize_item'),
       onSelect: makeAction('select_item'),
@@ -158,9 +164,9 @@ export class SimulatedAgent {
   private components(surface: string, limit = Number.POSITIVE_INFINITY): Record<string, unknown>[] {
     const visible = this.state.items.filter(x => x.surface === surface && !x.dismissed).slice(0, limit);
     return [
-      {id: 'root', component: 'Column', children: ['heading', ...visible.map(x => 'item-' + x.id)]},
+      {id: 'root', component: 'Column', children: ['heading', ...visible.map(x => componentId('item', x.id))]},
       {id: 'heading', component: 'Text', text: surface === 'main' ? SCENARIOS.find(x => x.id === this.scenario)?.name ?? 'Interaction Lab' : 'Agent ' + surface},
-      ...visible.flatMap(x => [this.component(x), {id: 'detail-' + x.id, component: 'Text', text: x.details}]),
+      ...visible.flatMap(x => [this.component(x), {id: componentId('detail', x.id), component: 'Text', text: x.details}]),
     ];
   }
   private activity(operations: Record<string, unknown>[], surface: string): void {
