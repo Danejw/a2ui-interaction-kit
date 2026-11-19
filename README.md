@@ -4,6 +4,20 @@ Reusable semantic interactions for agent-generated interfaces. A small TypeScrip
 
 **Status:** 0.1.0 starter. API and catalog are experimental and have not been published to npm. The engine is tested with Node's built-in test runner. React/A2UI integration requires dependency installation and an end-to-end test with your application.
 
+## Interaction Lab
+
+A browser-based deterministic AG-UI + A2UI integration playground is available in `apps/playground/`. It uses real A2UI renderer components and the reusable Interaction Kit, with seven simulator scenarios, event/action inspection, recording and replay, desktop/mobile browser tests, and no provider keys.
+
+```bash
+npm install
+npm run dev:lab
+npm run check:lab
+npx playwright install chromium
+npm run test:e2e
+```
+
+See [the lab guide](docs/LAB.md) and [the implementation plan](docs/INTERACTION_LAB_PLAN.md). GitHub Pages deployment is configured but requires GitHub Pages to be enabled with GitHub Actions as the source. Live model integration through AG-UI is a later milestone.
+
 ## Why
 
 AI agents can already generate layouts through A2UI. This package gives those layouts a consistent vocabulary of usable behaviors without reimplementing every button, swipe, and dispatch path per application.
