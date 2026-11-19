@@ -134,7 +134,16 @@ export function InteractiveItem({
               aria-label="Item actions" aria-haspopup="menu" aria-expanded={menuOpen}
               onClick={() => setMenuOpen(open => !open)}>···</button>
             {menuOpen && <div className="a2ui-interaction-item__menu" role="menu"
-              onKeyDown={event => {if (event.key === 'Escape') {setMenuOpen(false); menuTriggerRef.current?.focus();}}}>
+              onKeyDown={event => {
+                if (event.key === 'Escape') {setMenuOpen(false); menuTriggerRef.current?.focus(); return;}
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                  event.preventDefault();
+                  const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)'));
+                  const current = buttons.indexOf(document.activeElement as HTMLButtonElement);
+                  const delta = event.key === 'ArrowDown' ? 1 : -1;
+                  buttons[(current + delta + buttons.length) % buttons.length]?.focus();
+                }
+              }}>
               {canPrioritize && <button type="button" role="menuitem" disabled={busy !== null}
                 onClick={() => void invoke('Prioritize', onPrioritize)}>{prioritized ? 'Remove priority' : 'Prioritize'}</button>}
               {canDismiss && <button type="button" role="menuitem" className="is-danger" disabled={busy !== null}

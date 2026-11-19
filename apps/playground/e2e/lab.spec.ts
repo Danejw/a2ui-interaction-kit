@@ -165,6 +165,8 @@ test('menu closes on Escape and returns focus to its trigger', async ({page}) =>
   const card=page.locator('[data-item-id="match-01"]');
   const trigger=card.getByRole('button',{name:'Item actions'});
   await trigger.click();
+  await expect(card.getByRole('menuitem',{name:'Prioritize'})).toBeFocused();
+  await page.keyboard.press('ArrowDown');
   await expect(card.getByRole('menuitem',{name:'Dismiss'})).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(card.getByRole('menuitem',{name:'Dismiss'})).toHaveCount(0);
