@@ -172,3 +172,28 @@ test('menu closes on Escape and returns focus to its trigger', async ({page}) =>
   await expect(card.getByRole('menuitem',{name:'Dismiss'})).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
+
+test('card swipe background is concealed until an actual swipe begins', async ({page}) => {
+  const metrics=await page.locator('[data-item-id="match-01"]').evaluate(card => {
+    const body=card.querySelector('.a2ui-interaction-item__body') as HTMLElement;
+    const hint=card.querySelector('.a2ui-interaction-item__swipe-hint') as HTMLElement;
+    return {
+      cardPadding:getComputedStyle(card).paddingLeft,
+      bodyRight:body.getBoundingClientRect().right,
+      hintRight:hint.getBoundingClientRect().right,
+      swipe:getComputedStyle(body).transform
+    };
+  });
+  expect(metrics.cardPadding).toBe('0px');
+  expect(metrics.bodyRight).toBeGreaterThanOrEqual(metrics.hintRight-2);
+  expect(metrics.swipe).toMatch(/none|matrix\\(1, 0, 0, 1, 0, 0\\)/);
+});
+
+test('A2UI rendered surface heading has readable text contrast', async ({page}) => {
+  const styles=await page.locator('.surface a2ui-basic-text .a2ui-text').first().evaluate(element => ({
+    foreground:getComputedStyle(element).color,
+    background:getComputedStyle(element.closest('.device-frame') as Element).backgroundColor,
+  }));
+  expect(styles.foreground).not.toBe('rgb(238, 238, 238)');
+  expect(styles.foreground).toBe('rgb(53, 71, 97)');
+});
