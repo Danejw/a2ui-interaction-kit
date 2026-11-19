@@ -3,9 +3,14 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": {"dev": "vite", "build": "vite build", "typecheck": "tsc -p tsconfig.json", "preview": "vite preview"},
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@danejw/a2ui-interaction-kit": "0.1.0",
+    "@danejw/a2ui-interaction-kit": "file:../..",
     "@ag-ui/core": "^1.0.0",
     "@a2ui/react": "*",
     "@a2ui/web_core": "*",
