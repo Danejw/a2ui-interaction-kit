@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Danejw/a2ui-interaction-kit/blob/main/catalog/catalog.json",
+  "catalogId": "https://github.com/Danejw/a2ui-interaction-kit/blob/main/catalog/catalog.json",
+  "protocolVersion": "1.0",
+  "title": "A2UI Interaction Kit",
+  "description": "Adds semantic, reusable interactions to agent-generated interfaces.",
+  "instructions": "Use InteractiveItem for agent tasks, approvals, opportunities, and actionable rows. Declare only supported capabilities. An external capability is actionable only when its matching on* Action property is supplied. Use stable itemId values. The host application owns authorization, backend persistence, and all data mutations. Prefer reversible actions where available; never interpret dismiss as delete. Do not invent tool names or claim an interaction succeeded before the application confirms it.",
+  "components": {
+    "InteractiveItem": {
+      "type": "object",
+      "description": "A task or information card with accessible controls, touch swipe-to-dismiss, optional details, prioritization, selection and an application action.",
+      "properties": {
+        "component": {"const": "InteractiveItem"},
+        "itemId": {"$ref": "common_types.json#/$defs/DynamicString"},
+        "title": {"$ref": "common_types.json#/$defs/DynamicString"},
+        "description": {"$ref": "common_types.json#/$defs/DynamicString"},
+        "actionLabel": {"$ref": "common_types.json#/$defs/DynamicString"},
+        "capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["expandable", "dismissible", "prioritizable", "selectable", "actionable"]}
+        },
+        "prioritized": {"type": "boolean"},
+        "selected": {"type": "boolean"},
+        "children": {"$ref": "common_types.json#/$defs/ChildList"},
+        "onDismiss": {"$ref": "common_types.json#/$defs/Action"},
+        "onPrioritize": {"$ref": "common_types.json#/$defs/Action"},
+        "onSelect": {"$ref": "common_types.json#/$defs/Action"},
+        "onActivate": {"$ref": "common_types.json#/$defs/Action"},
+        "onExpand": {"$ref": "common_types.json#/$defs/Action"}
+      },
+      "required": ["component", "itemId", "title", "capabilities"],
+      "unevaluatedProperties": false
+    }
+  },
+  "$defs": {
+    "anyComponent": {
+      "oneOf": [{"$ref": "#/components/InteractiveItem"}],
+      "discriminator": {"propertyName": "component"}
+    },
+    "anyFunction": {"not": {}}
+  }
+}

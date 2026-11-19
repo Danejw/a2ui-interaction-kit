@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "createSurface": {
+    "surfaceId": "mission-control",
+    "catalogId": "https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json",
+    "components": [
+      {"id": "root", "component": "Column", "children": ["heading", "review_item"]},
+      {"id": "heading", "component": "Text", "text": "Agent Mission Control"},
+      {
+        "id": "review_item",
+        "@catalogId": "https://github.com/Danejw/a2ui-interaction-kit/blob/main/catalog/catalog.json",
+        "component": "InteractiveItem",
+        "itemId": "review-123",
+        "title": "Review contractor matches",
+        "description": "3 candidates ready for review",
+        "capabilities": ["expandable", "dismissible", "prioritizable", "actionable"],
+        "actionLabel": "Review",
+        "children": ["review_detail"],
+        "onDismiss": {"event": {"name": "dismiss_item", "context": {"itemId": "review-123"}}},
+        "onPrioritize": {"event": {"name": "prioritize_item", "context": {"itemId": "review-123"}}},
+        "onActivate": {"event": {"name": "review_item", "context": {"itemId": "review-123"}}}
+      },
+      {"id": "review_detail", "component": "Text", "text": "Compare candidates and approve a shortlist."}
+    ]
+  }
+}

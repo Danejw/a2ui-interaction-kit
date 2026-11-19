@@ -1,0 +1,13 @@
+.a2ui-interaction-item{box-sizing:border-box;border:1px solid var(--a2ui-kit-border,#d6dae0);border-radius:12px;padding:1rem;background:var(--a2ui-kit-surface,#fff);color:var(--a2ui-kit-text,#20242a);touch-action:pan-y;font-family:inherit}
+.a2ui-interaction-item__heading{display:flex;align-items:flex-start;gap:1rem;justify-content:space-between}
+.a2ui-interaction-item__copy{min-width:0;overflow-wrap:anywhere}
+.a2ui-interaction-item__copy p{font-size:.9rem;opacity:.75;margin:.4rem 0}
+.a2ui-interaction-item__actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem}
+.a2ui-interaction-item__button{font:inherit;font-size:.85rem;cursor:pointer;border:1px solid var(--a2ui-kit-border,#d6dae0);border-radius:8px;background:transparent;color:inherit;padding:.45rem .7rem;min-height:36px}
+.a2ui-interaction-item__button:disabled{opacity:.5;cursor:wait}
+.a2ui-interaction-item__button:focus-visible{outline:2px solid var(--a2ui-kit-focus,#3665db);outline-offset:2px}
+.a2ui-interaction-item__button[aria-pressed=true]{background:var(--a2ui-kit-selected,#e1e9ff)}
+.a2ui-interaction-item__details{margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--a2ui-kit-border,#d6dae0)}
+.a2ui-interaction-item__status:empty{display:none}
+.a2ui-interaction-item__status{font-size:.8rem;margin-top:.4rem}
+@media (prefers-reduced-motion:reduce){.a2ui-interaction-item,.a2ui-interaction-item__button{animation:none;transition:none}}
